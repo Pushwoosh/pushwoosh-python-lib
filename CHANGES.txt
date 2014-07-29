@@ -1,0 +1,17 @@
+v0.1.0, 2014-06-18
+    * Implemented Synchronous Client
+    * Implemented command:
+        CreateMessage
+        DeleteMessageCommand
+        CreateTargetedMessage
+        CompileFilter
+        RegisterDeviceCommand
+        UnregisterDeviceCommand
+        SetTagsCommand
+        SetBadgeCommand
+        PushStatCommand
+        GetNearestZoneCommand
+    * Implemented Filters from Advanced Tags Guide. Please see: docs/filters_guide.txt
+
+
+
