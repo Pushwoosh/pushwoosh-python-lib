@@ -13,7 +13,7 @@ setup(
     keywords=['Pushwoosh'],
     license='MIT',
     description='Python client for Pushwoosh',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
