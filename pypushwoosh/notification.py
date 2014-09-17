@@ -269,7 +269,7 @@ class Windows8NotificationMixin(BaseNotificationMixin):
     WNS platform related attributes mixin to notification.
 
     Attributes:
-        wns_content (dict): Optional. Content (XML or raw) of notification encoded in MIME's base64 in form of\
+        wns_content (dict): Optional. Content (XML or raw) of notification encoded in MIME's base64 in form of
         Object( language1: 'content1', language2: 'content2' ) OR String
 
         wns_type (str): Optional. 'Tile' | 'Toast' | 'Badge' | 'Raw'
