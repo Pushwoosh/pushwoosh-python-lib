@@ -1,30 +1,17 @@
 import httplib
 import json
-import sys
-from pprint import pformat
+import logging
 
 from pypushwoosh.base import PushwooshBaseClient
 
 
-def _debug_request(client, command):
-    print >> sys.stderr, 'Client:', client.__class__.__name__
-    print >> sys.stderr, 'Command:', command.render()
-
-    print >> sys.stderr, 'Request URL: %s://%s%s' % (client.scheme, client.hostname, client.path(command))
-    print >> sys.stderr, 'Request method:', client.method
-    print >> sys.stderr, 'Request headers:'
-    print >> sys.stderr, pformat(client.headers)
-
-
-def _debug_response(response):
-    print >> sys.stderr, 'Response version:', response.version
-    print >> sys.stderr, 'Response code:', response.status
-    print >> sys.stderr, 'Response phrase:', response.reason
-    print >> sys.stderr, 'Response headers:'
-    print >> sys.stderr, pformat(response.getheaders())
+log = logging.getLogger('pypushwoosh.client.log')
 
 
 class PushwooshClient(PushwooshBaseClient):
+    """
+    Implementation of the Pushwoosh API Client.
+    """
     headers = {'User-Agent': 'PyPushwooshClient',
                'Content-Type': 'application/json',
                'Accept': 'application/json'}
@@ -44,13 +31,20 @@ class PushwooshClient(PushwooshBaseClient):
         PushwooshBaseClient.invoke(self, command)
 
         if self.debug:
-            _debug_request(self, command)
+            log.debug('Client: %s' % self.__class__.__name__)
+            log.debug('Command: %s' % command.render())
+            log.debug('Request URL: %s://%s%s' % (self.scheme, self.hostname, self.path(command)))
+            log.debug('Request method: %s' % self.method)
+            log.debug('Request headers: %s' % self.headers)
 
         self.connection.request('POST', self.path(command), command.render(), self.headers)
         response = self.connection.getresponse()
 
         if self.debug:
-            _debug_response(response)
+            log.debug('Response version: %s' % response.version)
+            log.debug('Response code: %s' % response.status)
+            log.debug('Response phrase: %s' % response.reason)
+            log.debug('Response headers: %s' % response.getheaders())
 
         body = response.read()
         return json.loads(body)

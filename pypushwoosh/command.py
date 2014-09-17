@@ -3,8 +3,9 @@ import json
 from pypushwoosh.notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
     BaseNotificationMeta, IOSNotificationMixin, AndroidNotificationMixin, WindowsPhoneNotificationMixin, \
     OSXNotificationMixin, Windows8NotificationMixin, SafariNotificationMixin, AmazonNotificationMixin, \
-    CommonNotificationMixin
+    BlackBerryNotificationMixin, CommonNotificationMixin
 from pypushwoosh.utils import render_attrs
+from pypushwoosh.exceptions import PushwooshCommandException
 
 
 class BaseCommand(object):
@@ -37,18 +38,19 @@ class BaseAuthCommand(BaseCommand):
         self.auth = None
 
     def compile(self):
-        assert self.auth is not None, "auth is required"
+        if self.auth is None:
+            raise PushwooshCommandException('auth is required')
 
         self._command['auth'] = self.auth
         BaseCommand.compile(self)
 
 
-class CreateMessageCommand(BaseAuthCommand):
+class BaseCreateMessageCommand(BaseAuthCommand):
     """
     Creates new push notification command
 
     Attributes:
-        application (str): Optional. Pushwoosh application ID where you send the message to (cannot be used together
+        application (str): Optional. Pushwoosh application ID where you send the message to (cannot be used together\
                            with "applications_group")
         application_group (str): Optional. Pushwoosh Application group code (cannot be used together with "application")
         notifications (BaseNotification | list of BaseNotification): Required.
@@ -66,17 +68,12 @@ class CreateMessageCommand(BaseAuthCommand):
             assert isinstance(notification, Notification)
 
         self.notifications = notifications
-        self.application = None
-        self.application_group = None
+
+    def _set_recipient(self):
+        pass
 
     def compile(self):
-        assert not (self.application is None and self.application_group is None), "application or appication_group is required"
-        assert not (self.application is not None and self.application_group is not None), "application and appication_group is mutually exclusive options"
-
-        if self.application is not None:
-            self._command['application'] = self.application
-        elif self.application_group is not None:
-            self._command['application_group'] = self.application_group
+        self._set_recipient()
 
         notifications = []
         for notification in self.notifications:
@@ -84,6 +81,31 @@ class CreateMessageCommand(BaseAuthCommand):
         self._command['notifications'] = notifications
 
         BaseAuthCommand.compile(self)
+
+
+class CreateMessageForApplicationCommand(BaseCreateMessageCommand):
+
+    def __init__(self, notifications, application=None):
+        super(CreateMessageForApplicationCommand, self).__init__(notifications)
+        self.application = application
+
+    def _set_recipient(self):
+        if self.application is None:
+            raise PushwooshCommandException('application is required')
+
+        self._command['application'] = self.application
+
+
+class CreateMessageForApplicationGroupCommand(BaseCreateMessageCommand):
+
+    def __init__(self, notifications, application_group=None):
+        super(CreateMessageForApplicationGroupCommand, self).__init__(notifications)
+        self.application_group = application_group
+
+    def _set_recipient(self):
+        if self.application_group is None:
+            raise PushwooshCommandException('application_group is required')
+        self._command['applications_group'] = self.application_group
 
 
 class DeleteMessageCommand(BaseAuthCommand):
@@ -100,7 +122,8 @@ class DeleteMessageCommand(BaseAuthCommand):
         self.message = message
 
     def compile(self):
-        assert self.message is not None, "message is required"
+        if self.message is None:
+            raise PushwooshCommandException('message is required')
 
         render_attrs(self, self._command, ['message'])
         BaseAuthCommand.compile(self)
@@ -115,6 +138,7 @@ class CreateTargetedMessageCommand(BaseAuthCommand,
                                    Windows8NotificationMixin,
                                    SafariNotificationMixin,
                                    AmazonNotificationMixin,
+                                   BlackBerryNotificationMixin,
                                    DevicesFilterNotificationMixin,
                                    CommonNotificationMixin):
     """

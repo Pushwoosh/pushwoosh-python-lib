@@ -1,7 +1,10 @@
+from datetime import datetime, date
+
 from pypushwoosh.utils import valid_platform, platform_names, valid_operand_for_operator, valid_operand_list, \
-    valid_operand, valid_operator
+    valid_operand, valid_operator, valid_days, valid_bool, parse_date
 from pypushwoosh.constants import TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, \
     TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_BETWEEN
+from pypushwoosh.exceptions import PushwooshFilterInvalidOperandException, PushwooshFilterInvalidOperatorException
 
 
 class BaseFilter(object):
@@ -72,33 +75,42 @@ class BaseTagFilter(BaseFilter):
     value_types = tuple()
 
     def __init__(self, tag_name, operator, operand):
+        self.semantic_validation(operator, operand)
+
         self.tag_name = tag_name
-
-        assert valid_operator(operator, self.operators), 'Invalid operator %s for %s' % (operator, self.__class__.__name__)
-        assert valid_operand_for_operator(operand, operator), 'Invalid operand type %s for operator %s' % (type(operand).__name__, operator)
-        if isinstance(operand, list):
-            assert valid_operand_list(operand, self.value_types), 'Invalid operand list value for %s' % (self.__class__.__name__)
-        else:
-            assert valid_operand(operand, self.value_types), 'Invalid operand type %s for %s' % (type(operand).__name__, self.__class__.__name__)
-
-        if operator == TAG_FILTER_OPERATOR_BETWEEN:
-            assert len(operand) == 2, 'Invalid operand len for operator %s' % operator
-        elif operator == TAG_FILTER_OPERATOR_IN:
-            assert len(operand) > 0, 'Invalid operand len for operator %s' % operator
-
         self.operator = operator
         self.operand = operand
 
     def __str__(self):
         return '%s("%s", %s, %s)' % (self.prefix, self.tag_name, self.operator, self._render_operand())
 
+    def semantic_validation(self, operator, operand):
+        if not valid_operator(operator, self.operators):
+            raise PushwooshFilterInvalidOperatorException('Invalid operator %s for %s' % (operator, self.__class__.__name__))
+
+        if not valid_operand_for_operator(operand, operator):
+            raise PushwooshFilterInvalidOperandException('Invalid operand type %s for operator %s' % (type(operand).__name__, operator))
+
+        if isinstance(operand, list) and not valid_operand_list(operand, self.value_types):
+            raise PushwooshFilterInvalidOperandException('Invalid operand list value for %s' % self.__class__.__name__)
+
+        if not isinstance(operand, list) and not valid_operand(operand, self.value_types):
+            raise PushwooshFilterInvalidOperandException('Invalid operand type %s for %s' % (type(operand).__name__, self.__class__.__name__))
+
+        if operator == TAG_FILTER_OPERATOR_BETWEEN and len(operand) != 2:
+            raise PushwooshFilterInvalidOperandException('Invalid operand len for operator %s' % operator)
+
+        if operator == TAG_FILTER_OPERATOR_IN and len(operand) == 0:
+            raise PushwooshFilterInvalidOperandException('Invalid operand len for operator %s' % operator)
+
     def _render_operand(self):
         if isinstance(self.operand, list):
             return self._render_list_operand(self.operand)
         elif isinstance(self.operand, int):
             return self._render_int_operand(self.operand)
-        elif isinstance(self.operand, basestring):
+        elif isinstance(self.operand, basestring) or isinstance(self.operand, datetime) or isinstance(self.operand, date):
             return self._render_str_operand(self.operand)
+
         raise NotImplementedError()
 
     def _render_list_operand(self, operand):
@@ -117,9 +129,21 @@ class BaseTagFilter(BaseFilter):
         return '%d' % operand
 
 
+class ApplicationBaseTagFilter(BaseTagFilter):
+    prefix = 'AT'
+
+    def __init__(self, tag_name, operator, operand, code):
+        super(ApplicationBaseTagFilter, self).__init__(tag_name, operator, operand)
+        self.code = code
+
+    def __str__(self):
+        return '%s("%s", "%s", %s, %s)' % (self.prefix, self.code, self.tag_name, self.operator,
+                                           self._render_operand())
+
+
 class IntegerTagFilter(BaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,
-                 TAG_FILTER_OPERATOR_BETWEEN,)
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN)
     value_types = (int,)
 
 
@@ -129,5 +153,86 @@ class StringTagFilter(BaseTagFilter):
 
 
 class ListTagFilter(BaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_IN,)
+    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,)
+    value_types = (int, basestring,)
+
+
+class DateTagFilter(BaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN)
+    value_types = (basestring, date, datetime)
+
+    def semantic_validation(self, operator, operand):
+        super(DateTagFilter, self).semantic_validation(operator, operand)
+        self.operand = parse_date(operand)
+        if not self.operand:
+            raise PushwooshFilterInvalidOperandException('Invalid date format')
+
+
+class DaysTagFilter(BaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,)
+    value_types = (int,)
+
+    def semantic_validation(self, operator, operand):
+        super(DaysTagFilter, self).semantic_validation(operator, operand)
+        if not valid_days(operand):
+            raise PushwooshFilterInvalidOperandException('Days count must be greater than 0')
+
+
+class BooleanTagFilter(BaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_EQ,)
     value_types = (int, basestring)
+
+    def semantic_validation(self, operator, operand):
+        super(BooleanTagFilter, self).semantic_validation(operator, operand)
+        if not valid_bool(operand):
+            raise PushwooshFilterInvalidOperandException('%s value must be 0, 1, "true" or "false"' % self.__class__.__name__)
+
+
+# Application tag filters
+class IntegerTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN)
+    value_types = (int,)
+
+
+class StringTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,)
+    value_types = (int, basestring,)
+
+
+class ListTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,)
+    value_types = (int, basestring,)
+
+
+class DateTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN)
+    value_types = (basestring,)
+
+    def semantic_validation(self, operator, operand):
+        super(DateTagFilterByApplication, self).semantic_validation(operator, operand)
+        self.operand = parse_date(operand)
+        if not self.operand:
+            raise PushwooshFilterInvalidOperandException('Invalid date format')
+
+
+class DaysTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,)
+    value_types = (int,)
+
+    def semantic_validation(self, operator, operand):
+        super(DaysTagFilterByApplication, self).semantic_validation(operator, operand)
+        if not valid_days(operand):
+            raise PushwooshFilterInvalidOperandException('Days count must be greater than 0')
+
+
+class BooleanTagFilterByApplication(ApplicationBaseTagFilter):
+    operators = (TAG_FILTER_OPERATOR_EQ,)
+    value_types = (int, basestring)
+
+    def semantic_validation(self, operator, operand):
+        super(BooleanTagFilterByApplication, self).semantic_validation(operator, operand)
+        if not valid_bool(operand):
+            raise PushwooshFilterInvalidOperandException('%s value must be 0, 1, "true" or "false"' % self.__class__.__name__)

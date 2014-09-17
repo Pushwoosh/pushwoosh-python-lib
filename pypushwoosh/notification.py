@@ -4,6 +4,7 @@ import inspect
 from pypushwoosh import constants
 from pypushwoosh.filter import BaseFilter
 from pypushwoosh.utils import render_attrs
+from pypushwoosh.exceptions import PushwooshNotificationException
 
 
 class BaseNotificationMixin(object):
@@ -26,7 +27,7 @@ class BaseNotification(object):
 
 
 class BaseNotificationMeta(type):
-    def __new__(cls, name, bases, dct):
+    def __new__(mcs, name, bases, dct):
         _mixed = set(dct.get('_mixed', tuple()))
         for klass in bases:
             if issubclass(klass, BaseNotificationMixin) and not issubclass(klass, BaseNotification):
@@ -34,7 +35,7 @@ class BaseNotificationMeta(type):
             elif issubclass(klass, BaseNotification):
                 _mixed.update(getattr(klass, '_mixed', tuple()))
         dct['_mixed'] = tuple(_mixed)
-        return type.__new__(cls, name, bases, dct)
+        return type.__new__(mcs, name, bases, dct)
 
 
 class CommonNotificationMixin(BaseNotificationMixin):
@@ -52,7 +53,6 @@ class CommonNotificationMixin(BaseNotificationMixin):
     """
 
     def __init__(self):
-
         self.send_date = constants.SEND_DATE_NOW
         self.ignore_user_timezone = None
         self.content = None
@@ -89,16 +89,17 @@ class FilteredNotificationMixin(BaseNotificationMixin):
 #   TODO: better describe this
 
     def __init__(self):
-        self.platform = None
+        self.platforms = None
         self.devices = None
         self.filter = None
         self.conditions = None
 
     def render(self):
-        assert not (self.filter is not None and self.conditions is not None), "filter and conditions is mutually exclusive options"
+        if self.filter is not None and self.conditions is not None:
+            raise PushwooshNotificationException('filter and conditions is mutually exclusive options')
 
         result = {}
-        render_attrs(self, result, ('platform', 'devices', 'filter', 'conditions'))
+        render_attrs(self, result, ('platforms', 'devices', 'filter', 'conditions'))
         return result
 
 
@@ -121,11 +122,13 @@ class DevicesFilterNotificationMixin(BaseNotificationMixin):
 
     @devices_filter.setter
     def devices_filter(self, filter):
-        assert isinstance(filter, BaseFilter) or isinstance(filter, basestring), "Must be BaseFilter or string."
+        if not (isinstance(filter, BaseFilter) or isinstance(filter, basestring)):
+            raise PushwooshNotificationException('Must be BaseFilter or string.')
         self._devices_filter = filter
 
     def render(self):
-        assert self.devices_filter is not None, "devices_filter is required"
+        if self.devices_filter is None:
+            raise PushwooshNotificationException('devices_filter is required')
         return {'devices_filter': self.devices_filter}
 
 
@@ -193,6 +196,7 @@ class WindowsPhoneNotificationMixin(BaseNotificationMixin):
         wp_background (str): Optional. Tile image
         wp_backbackground (str): Optional. Back tile image
         wp_backtitle (str): Optional. Back tile title
+        wp_backcontent (str): Optional. Back tile content
         wp_count (int): Optional. Badge for Windows Phone notification
     """
 
@@ -201,11 +205,12 @@ class WindowsPhoneNotificationMixin(BaseNotificationMixin):
         self.wp_background = None
         self.wp_backbackground = None
         self.wp_backtitle = None
+        self.wp_backcontent = None
         self.wp_count = None
 
     def render(self):
         result = {}
-        render_attrs(self, result, ('wp_type', 'wp_background', 'wp_backbackground', 'wp_backtitle', 'wp_count'))
+        render_attrs(self, result, ('wp_type', 'wp_background', 'wp_backbackground', 'wp_backtitle', 'wp_count', 'wp_backcontent'))
         return result
 
 
@@ -237,11 +242,10 @@ class Windows8NotificationMixin(BaseNotificationMixin):
     WNS platform related attributes mixin to notification.
 
     Attributes:
-        wns_content (dict): Optional. Content (XML or raw) of notification encoded in MIME's base64 in form of
+        wns_content (dict): Optional. Content (XML or raw) of notification encoded in MIME's base64 in form of\
                             Object( language1: 'content1', language2: 'content2' ) OR String
         wns_type (str): Optional. 'Tile' | 'Toast' | 'Badge' | 'Raw'
-        wns_tag (str): Optional. Used in the replacement policy of the Tile. An alphanumeric string of no more than 16
-                       characters.
+        wns_tag (str): Optional. Used in the replacement policy of the Tile. An alphanumeric string of no more than 16 characters.
     """
 
     def __init__(self):
@@ -312,6 +316,25 @@ class AmazonNotificationMixin(BaseNotificationMixin):
         return result
 
 
+class BlackBerryNotificationMixin(BaseNotificationMixin):
+    """
+    BlackBerry platform related attributes mixin to notification.
+
+    Attributes:
+        blackberry_header (str): Optional.
+    """
+
+#   TODO: better describe this
+
+    def __init__(self):
+        self.blackberry_header = None
+
+    def render(self):
+        result = {}
+        render_attrs(self, result, ('blackberry_header',))
+        return result
+
+
 class Notification(BaseNotification,
                    IOSNotificationMixin,
                    AndroidNotificationMixin,
@@ -320,6 +343,7 @@ class Notification(BaseNotification,
                    Windows8NotificationMixin,
                    SafariNotificationMixin,
                    AmazonNotificationMixin,
+                   BlackBerryNotificationMixin,
                    FilteredNotificationMixin,
                    CommonNotificationMixin):
     __metaclass__ = BaseNotificationMeta

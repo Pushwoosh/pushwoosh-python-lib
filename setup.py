@@ -1,19 +1,21 @@
 from distutils.core import setup
 
+from pypushwoosh import __version__
+
 
 setup(
     name='pyPushwoosh',
-    version='0.1.0',
+    version=__version__,
     author='Konstantin Misyutin',
     author_email='ikeeip@gmail.com',
     maintainer='Konstantin Misyutin',
     maintainer_email='ikeeip@gmail.com',
-    packages=['pypushwoosh', 'pypushwoosh.test'],
+    packages=['pypushwoosh'],
     url='http://pushwoosh.com/',
     keywords=['Pushwoosh'],
     license='MIT',
     description='Python client for Pushwoosh',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
