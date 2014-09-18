@@ -2,7 +2,7 @@ import httplib
 import json
 import logging
 
-from pypushwoosh.base import PushwooshBaseClient
+from base import PushwooshBaseClient
 
 
 log = logging.getLogger('pypushwoosh.client.log')

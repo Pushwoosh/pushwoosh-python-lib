@@ -1,10 +1,9 @@
 # coding=utf-8
-import inspect
 
-from pypushwoosh import constants
-from pypushwoosh.filter import BaseFilter
-from pypushwoosh.utils import render_attrs
-from pypushwoosh.exceptions import PushwooshNotificationException
+import constants
+from filter import BaseFilter
+from utils import render_attrs
+from exceptions import PushwooshNotificationException
 
 
 class BaseNotificationMixin(object):

@@ -1,11 +1,11 @@
 import json
 
-from pypushwoosh.notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
+from notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
     BaseNotificationMeta, IOSNotificationMixin, AndroidNotificationMixin, WindowsPhoneNotificationMixin, \
     OSXNotificationMixin, Windows8NotificationMixin, SafariNotificationMixin, AmazonNotificationMixin, \
     BlackBerryNotificationMixin, CommonNotificationMixin
-from pypushwoosh.utils import render_attrs
-from pypushwoosh.exceptions import PushwooshCommandException
+from utils import render_attrs
+from exceptions import PushwooshCommandException
 
 
 class BaseCommand(object):

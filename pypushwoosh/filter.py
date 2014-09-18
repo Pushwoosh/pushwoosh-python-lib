@@ -1,10 +1,10 @@
 from datetime import datetime, date
 
-from pypushwoosh.utils import valid_platform, platform_names, valid_operand_for_operator, valid_operand_list, \
+from utils import valid_platform, platform_names, valid_operand_for_operator, valid_operand_list, \
     valid_operand, valid_operator, valid_days, valid_bool, parse_date
-from pypushwoosh.constants import TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, \
+from constants import TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, \
     TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_BETWEEN
-from pypushwoosh.exceptions import PushwooshFilterInvalidOperandException, PushwooshFilterInvalidOperatorException
+from exceptions import PushwooshFilterInvalidOperandException, PushwooshFilterInvalidOperatorException
 
 
 class BaseFilter(object):

@@ -1,4 +1,4 @@
-from pypushwoosh.command import BaseCommand
+from command import BaseCommand
 
 
 class PushwooshBaseClient(object):
