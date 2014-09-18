@@ -31,7 +31,7 @@ class BaseAuthCommand(BaseCommand):
 
     Attributes:
         auth (str): Required. API access token from the Pushwoosh control panel (create this token
-            at https://cp.pushwoosh.com/api_access)
+        at https://cp.pushwoosh.com/api_access)
     """
     def __init__(self):
         BaseCommand.__init__(self)
@@ -50,9 +50,11 @@ class BaseCreateMessageCommand(BaseAuthCommand):
     Creates new push notification command
 
     Attributes:
-        application (str): Optional. Pushwoosh application ID where you send the message to (cannot be used together\
-                           with "applications_group")
+        application (str): Optional. Pushwoosh application ID where you send the message to (cannot be used together
+        with "applications_group")
+
         application_group (str): Optional. Pushwoosh Application group code (cannot be used together with "application")
+
         notifications (BaseNotification | list of BaseNotification): Required.
     """
     command_name = 'createMessage'
@@ -178,9 +180,9 @@ class BaseDeviceCommand(BaseCommand):
 
     Attributes:
         application (str): Required. Pushwoosh application ID where you send the message to
+
         hwid (str): Required. Unique string to identify the device (Please note that accessing UDID on iOS is
-                    deprecated and not allowed, one of the alternative ways now is to use MAC address or
-                    IdentifierForVendors)
+        deprecated and not allowed, one of the alternative ways now is to use MAC address or IdentifierForVendors)
     """
     def __init__(self, application, hwid):
         BaseCommand.__init__(self)
@@ -198,8 +200,11 @@ class RegisterDeviceCommand(BaseDeviceCommand):
 
     Attributes:
         device_type (str): Required. Device type. Please see PLATFORM_* constants
+
         push_token (str): Required. Push token for the device
+
         language (str): Optional. Language locale of the device
+
         timezone (str): Optional. Timezone offset in seconds for the device
     """
     command_name = 'registerDevice'
@@ -283,6 +288,7 @@ class GetNearestZoneCommand(BaseDeviceCommand):
 
     Attributes:
         lat (float): Required. Latitude of the device
+
         lng (float): Required. Longitude of the device
     """
     command_name = 'getNearestZone'

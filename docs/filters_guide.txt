@@ -1,3 +1,0 @@
-please see: http://www.pushwoosh.com/programming-push-notification/advanced-tags-guide/
-
-TODO: better describe this

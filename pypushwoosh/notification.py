@@ -44,12 +44,18 @@ class CommonNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         send_date (str): Required. Time when need to send notification (YYYY-MM-DD HH:mm or 'now').
+
         content (dict or str): Required. Notification text or dictionary of language-text map.
+
         ignore_user_timezone (bool): Optional. Ignore device time zone when sending message. Default False.
-        page_id (int): Optional. Page number for rich push.
+
+        page_id (int): Optional. Page number for rich push.
+
         link (str): Optional. Link
-        minimize_link (int): Optional. Minimizer type. See constant.MINIMIZER_* for more information. Default "goo.gl"
-        data (dict): Optional. Custom data will be passed to device with notification.
+
+        minimize_link (int): Optional. Minimizer type. See constant.MINIMIZER_* for more information. Default "goo.gl"
+
+        data (dict): Optional. Custom data will be passed to device with notification.
     """
 
     def __init__(self):
@@ -80,8 +86,11 @@ class FilteredNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         platform (list of int): Optional.
+
         devices (list of str): Optional.
+
         filter (str): Optional.
+
         conditions (list of conditions): Optional.
 
     """
@@ -138,9 +147,13 @@ class IOSNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         ios_badges (int): Optional. This value will be sent to ALL devices given in "devices"
+
         ios_sound (str): Optional. Sound file name in the main bundle of application
+
         ios_ttl (int): Optional. Time to live parameter - the maximum lifespan of a message in seconds
+
         ios_root_params (dict): Optional. Root level parameters to the aps dictionary.
+
         apns_trim_content (bool): Optional. Trims the exceeding content strings with ellipsis
     """
 
@@ -163,11 +176,17 @@ class AndroidNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         android_root_params (dict): Optional. Root level parameters for the android payload recipients.
+
         android_sound (str): Optional. Sound file name in the "res/raw" folder, do not include the extension
+
         android_header (str): Optional. Android notification header
+
         android_icon (str): Optional.
+
         android_custom_icon (str): Optional. Full path URL to the image file
+
         android_banner (str): Optional. Full path URL to the image file
+
         android_gcm_ttl (int): Optional. Time to live parameter - the maximum lifespan of a message in seconds
     """
 
@@ -193,10 +212,15 @@ class WindowsPhoneNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         wp_type (str): Optional. Windows Phone notification type. 'Tile' or 'Toast'. Raw notifications are not supported
+
         wp_background (str): Optional. Tile image
+
         wp_backbackground (str): Optional. Back tile image
+
         wp_backtitle (str): Optional. Back tile title
+
         wp_backcontent (str): Optional. Back tile content
+
         wp_count (int): Optional. Badge for Windows Phone notification
     """
 
@@ -220,8 +244,11 @@ class OSXNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         mac_badges (int): Optional.
+
         mac_sound (str): Optional. Sound file name in the main bundle of application
+
         mac_root_params (dict): Optional. Root level parameters to the aps dictionary.
+
         mac_ttl (int): Optional. Time to live parameter - the maximum lifespan of a message in seconds
     """
 
@@ -243,9 +270,12 @@ class Windows8NotificationMixin(BaseNotificationMixin):
 
     Attributes:
         wns_content (dict): Optional. Content (XML or raw) of notification encoded in MIME's base64 in form of\
-                            Object( language1: 'content1', language2: 'content2' ) OR String
+        Object( language1: 'content1', language2: 'content2' ) OR String
+
         wns_type (str): Optional. 'Tile' | 'Toast' | 'Badge' | 'Raw'
-        wns_tag (str): Optional. Used in the replacement policy of the Tile. An alphanumeric string of no more than 16 characters.
+
+        wns_tag (str): Optional. Used in the replacement policy of the Tile. An alphanumeric string of no more than
+        16 characters.
     """
 
     def __init__(self):
@@ -265,8 +295,11 @@ class SafariNotificationMixin(BaseNotificationMixin):
     
     Attributes:
         safari_title (str): Optional.
+
         safari_action (str): Optional.
+
         safari_url_args (list of str): Optional.
+
         safari_ttl (int): Optional.
     """
 
@@ -290,11 +323,17 @@ class AmazonNotificationMixin(BaseNotificationMixin):
 
     Attributes:
         adm_root_params (dict): Optional.
+
         adm_sound (str): Optional.
+
         adm_header (str): Optional.
+
         adm_icon (str): Optional.
+
         adm_custom_icon (str): Optional.
+
         adm_banner (str): Optional.
+
         adm_ttl (int): Optional.
     """
 

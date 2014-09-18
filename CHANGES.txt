@@ -1,17 +1,38 @@
+v0.1.1, 2014-09-18
+
+changes:
+
+* removed version from setup.py
+* asserts replaced by exceptions
+* added logging to pypushwoosh.client
+* CreateMessageCommand is splitted to CreateMessageForApplicationCommand, CreateMessageForApplicationGroupCommand
+
+features:
+
+* added DateTagFilter, DaysTagFilter, BooleanTagFilter
+* added tag filters by application
+* added api references documentation
+
+bugfixes:
+
+* fixed bug in FilteredNotificationMixin
+* added missed wp_backcontent property to WindowsPhoneNotificationMixin
+* added missed BlackBerryNotificationMixin
+* fixed valid_operand_for_operator
+
+
 v0.1.0, 2014-06-18
-    * Implemented Synchronous Client
-    * Implemented command:
-        CreateMessage
-        DeleteMessageCommand
-        CreateTargetedMessage
-        CompileFilter
-        RegisterDeviceCommand
-        UnregisterDeviceCommand
-        SetTagsCommand
-        SetBadgeCommand
-        PushStatCommand
-        GetNearestZoneCommand
-    * Implemented Filters from Advanced Tags Guide. Please see: docs/filters_guide.txt
 
-
-
+* Implemented Synchronous Client
+* Implemented command:
+    CreateMessage
+    DeleteMessageCommand
+    CreateTargetedMessage
+    CompileFilter
+    RegisterDeviceCommand
+    UnregisterDeviceCommand
+    SetTagsCommand
+    SetBadgeCommand
+    PushStatCommand
+    GetNearestZoneCommand
+* Implemented Filters from Advanced Tags Guide. Please see: docs/filters_guide.txt
