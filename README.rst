@@ -60,6 +60,7 @@ ____________
 Install from source:
 
 ::
+
     $ git clone git://github.com/Pushwoosh/pushwoosh-python-lib.git
     $ cd pushwoosh-python-lib
     $ python setup.py install
