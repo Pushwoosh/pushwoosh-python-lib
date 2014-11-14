@@ -2,7 +2,7 @@ from datetime import datetime, date
 
 from constants import PLATFORMS, PLATFORM_NAMES, LINK_MINIMIZERS,\
     TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN, \
-    TAG_FILTER_OPERATOR_BETWEEN
+    TAG_FILTER_OPERATOR_BETWEEN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ
 
 
 def valid_platform(platform):
@@ -41,7 +41,9 @@ def valid_operand_for_operator(operand, operator):
         TAG_FILTER_OPERATOR_GTE: (int, basestring, date, datetime),
         TAG_FILTER_OPERATOR_BETWEEN: (list,),
         TAG_FILTER_OPERATOR_EQ: (int, basestring, list, date, datetime),
-        TAG_FILTER_OPERATOR_IN: (list,)
+        TAG_FILTER_OPERATOR_NOTEQ: (int, basestring, date, datetime),
+        TAG_FILTER_OPERATOR_IN: (list,),
+        TAG_FILTER_OPERATOR_NOTIN: (list,)
     }
     return valid_operand(operand, _map[operator])
 

@@ -151,6 +151,8 @@ class IOSNotificationMixin(BaseNotificationMixin):
 
         ios_ttl (int): Optional. Time to live parameter - the maximum lifespan of a message in seconds
 
+        ios_category_id (int): Optional. iOS8 category id from pushwoosh control panel
+
         ios_root_params (dict): Optional. Root level parameters to the aps dictionary.
 
         apns_trim_content (bool): Optional. Trims the exceeding content strings with ellipsis
@@ -160,6 +162,7 @@ class IOSNotificationMixin(BaseNotificationMixin):
         self.ios_badges = None
         self.ios_sound = None
         self.ios_ttl = None
+        self.ios_category_id = None
         self.ios_root_params = None
         self.apns_trim_content = None
 
@@ -373,6 +376,29 @@ class BlackBerryNotificationMixin(BaseNotificationMixin):
         return result
 
 
+class ChromeNotificationMixin(BaseNotificationMixin):
+    """
+   Chrome platform related attributes mixin to notification.
+
+    Attributes:
+        chrome_header (str): Optional
+        chrome_icon (str):  Optional
+        chrome_gcm_ttl (int): Optional
+    """
+
+#   TODO: better describe this
+
+    def __init__(self):
+        self.chrome_header = None
+        self.chrome_icon = None
+        self.chrome_ttl = None
+
+    def render(self):
+        result = {}
+        render_attrs(self, result, ('chrome_header', 'chrome_icon', 'chrome_ttl',))
+        return result
+
+
 class Notification(BaseNotification,
                    IOSNotificationMixin,
                    AndroidNotificationMixin,
@@ -382,6 +408,7 @@ class Notification(BaseNotification,
                    SafariNotificationMixin,
                    AmazonNotificationMixin,
                    BlackBerryNotificationMixin,
+                   ChromeNotificationMixin,
                    FilteredNotificationMixin,
                    CommonNotificationMixin):
     __metaclass__ = BaseNotificationMeta

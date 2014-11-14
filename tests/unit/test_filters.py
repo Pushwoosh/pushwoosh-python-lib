@@ -146,13 +146,6 @@ class TestInvalidOperator(unittest.TestCase):
         self.filter_with_invalid_operator(value, constants.TAG_FILTER_OPERATOR_LTE, tag_name)
         self.filter_with_invalid_operator(list_value, constants.TAG_FILTER_OPERATOR_BETWEEN, tag_name)
 
-    def test_invalid_operator_type_days(self):
-        tag_name = 'testDays'
-        list_value = [1, 2, 3]
-
-        self.pwfilter = DaysTagFilter
-        self.filter_with_invalid_operator(list_value, constants.TAG_FILTER_OPERATOR_IN, tag_name)
-
     def test_invalid_operator_type_boolean(self):
         tag_name = 'testBool'
         value = 1

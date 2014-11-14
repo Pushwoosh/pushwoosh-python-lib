@@ -217,6 +217,22 @@ class TestNotifications(unittest.TestCase):
 
         return expected_result
 
+    def notification_chrome(self):
+        chrome_header = 'Test header'
+        chrome_icon = 'icon in app'
+        chrome_ttl = 60 * 60 * 24
+
+        expected_result = {
+            'chrome_header': chrome_header,
+            'chrome_icon': chrome_icon,
+            'chrome_ttl': chrome_ttl,
+        }
+        self.notification.chrome_header = chrome_header
+        self.notification.chrome_icon = chrome_icon
+        self.notification.chrome_ttl = chrome_ttl
+
+        return expected_result
+
     def test_full_notification(self):
         expected_result = dict()
         expected_result.update(self.notification_common())
@@ -229,6 +245,7 @@ class TestNotifications(unittest.TestCase):
         expected_result.update(self.notification_safari())
         expected_result.update(self.notification_amazon())
         expected_result.update(self.notification_blackberry())
+        expected_result.update(self.notification_chrome())
 
         self.assertDictEqual(self.notification.render(), expected_result)
 
@@ -285,6 +302,11 @@ class TestNotifications(unittest.TestCase):
     def test_notification_blackberry(self):
         expected_result = {'content': None, 'send_date': 'now'}
         expected_result.update(self.notification_blackberry())
+        self.assertDictEqual(self.notification.render(), expected_result)
+
+    def test_notification_chrome(self):
+        expected_result = {'content': None, 'send_date': 'now'}
+        expected_result.update(self.notification_chrome())
         self.assertDictEqual(self.notification.render(), expected_result)
 
 

@@ -3,7 +3,7 @@ import json
 from notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
     BaseNotificationMeta, IOSNotificationMixin, AndroidNotificationMixin, WindowsPhoneNotificationMixin, \
     OSXNotificationMixin, Windows8NotificationMixin, SafariNotificationMixin, AmazonNotificationMixin, \
-    BlackBerryNotificationMixin, CommonNotificationMixin
+    BlackBerryNotificationMixin, CommonNotificationMixin, ChromeNotificationMixin, FilteredNotificationMixin
 from utils import render_attrs
 from exceptions import PushwooshCommandException
 
@@ -141,6 +141,7 @@ class CreateTargetedMessageCommand(BaseAuthCommand,
                                    SafariNotificationMixin,
                                    AmazonNotificationMixin,
                                    BlackBerryNotificationMixin,
+                                   ChromeNotificationMixin,
                                    DevicesFilterNotificationMixin,
                                    CommonNotificationMixin):
     """

@@ -3,7 +3,7 @@ from datetime import datetime, date
 from utils import valid_platform, platform_names, valid_operand_for_operator, valid_operand_list, \
     valid_operand, valid_operator, valid_days, valid_bool, parse_date
 from constants import TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, \
-    TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_BETWEEN
+    TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_BETWEEN, TAG_FILTER_OPERATOR_NOTEQ, TAG_FILTER_OPERATOR_NOTIN
 from exceptions import PushwooshFilterInvalidOperandException, PushwooshFilterInvalidOperatorException
 
 
@@ -143,12 +143,12 @@ class ApplicationBaseTagFilter(BaseTagFilter):
 
 class IntegerTagFilter(BaseTagFilter):
     operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
-                 TAG_FILTER_OPERATOR_IN)
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTEQ, TAG_FILTER_OPERATOR_NOTIN)
     value_types = (int,)
 
 
 class StringTagFilter(BaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,)
+    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTEQ, TAG_FILTER_OPERATOR_NOTIN)
     value_types = (int, basestring,)
 
 
@@ -159,7 +159,7 @@ class ListTagFilter(BaseTagFilter):
 
 class DateTagFilter(BaseTagFilter):
     operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
-                 TAG_FILTER_OPERATOR_IN)
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ)
     value_types = (basestring, date, datetime)
 
     def semantic_validation(self, operator, operand):
@@ -170,7 +170,8 @@ class DateTagFilter(BaseTagFilter):
 
 
 class DaysTagFilter(BaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,)
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ)
     value_types = (int,)
 
     def semantic_validation(self, operator, operand):
@@ -192,12 +193,12 @@ class BooleanTagFilter(BaseTagFilter):
 # Application tag filters
 class IntegerTagFilterByApplication(ApplicationBaseTagFilter):
     operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
-                 TAG_FILTER_OPERATOR_IN)
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTEQ, TAG_FILTER_OPERATOR_NOTIN)
     value_types = (int,)
 
 
 class StringTagFilterByApplication(ApplicationBaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN,)
+    operators = (TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTEQ, TAG_FILTER_OPERATOR_NOTIN)
     value_types = (int, basestring,)
 
 
@@ -208,7 +209,7 @@ class ListTagFilterByApplication(ApplicationBaseTagFilter):
 
 class DateTagFilterByApplication(ApplicationBaseTagFilter):
     operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
-                 TAG_FILTER_OPERATOR_IN)
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ)
     value_types = (basestring,)
 
     def semantic_validation(self, operator, operand):
@@ -219,7 +220,8 @@ class DateTagFilterByApplication(ApplicationBaseTagFilter):
 
 
 class DaysTagFilterByApplication(ApplicationBaseTagFilter):
-    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,)
+    operators = (TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_BETWEEN,
+                 TAG_FILTER_OPERATOR_IN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ)
     value_types = (int,)
 
     def semantic_validation(self, operator, operand):
