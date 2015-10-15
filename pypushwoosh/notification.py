@@ -1,9 +1,10 @@
 # coding=utf-8
+from six import string_types, add_metaclass
 
-import constants
-from filter import BaseFilter
-from utils import render_attrs
-from exceptions import PushwooshNotificationException
+from . import constants
+from .filter import BaseFilter
+from .utils import render_attrs
+from .exceptions import PushwooshNotificationException
 
 
 class BaseNotificationMixin(object):
@@ -130,7 +131,7 @@ class DevicesFilterNotificationMixin(BaseNotificationMixin):
 
     @devices_filter.setter
     def devices_filter(self, filter):
-        if not (isinstance(filter, BaseFilter) or isinstance(filter, basestring)):
+        if not (isinstance(filter, BaseFilter) or isinstance(filter, string_types)):
             raise PushwooshNotificationException('Must be BaseFilter or string.')
         self._devices_filter = filter
 
@@ -294,7 +295,7 @@ class Windows8NotificationMixin(BaseNotificationMixin):
 class SafariNotificationMixin(BaseNotificationMixin):
     """
     Safari platform related attributes mixin to notification.
-    
+
     Attributes:
         safari_title (str): Optional.
 
@@ -399,6 +400,7 @@ class ChromeNotificationMixin(BaseNotificationMixin):
         return result
 
 
+@add_metaclass(BaseNotificationMeta)
 class Notification(BaseNotification,
                    IOSNotificationMixin,
                    AndroidNotificationMixin,
@@ -411,7 +413,6 @@ class Notification(BaseNotification,
                    ChromeNotificationMixin,
                    FilteredNotificationMixin,
                    CommonNotificationMixin):
-    __metaclass__ = BaseNotificationMeta
     """
     Pushwoosh notification. Includes all supported platforms mixins. Renders notification to dict.
     """

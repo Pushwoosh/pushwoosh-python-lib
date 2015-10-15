@@ -1,6 +1,8 @@
 from datetime import datetime, date
 
-from constants import PLATFORMS, PLATFORM_NAMES, LINK_MINIMIZERS,\
+from six import string_types
+
+from .constants import PLATFORMS, PLATFORM_NAMES, LINK_MINIMIZERS,\
     TAG_FILTER_OPERATOR_LTE, TAG_FILTER_OPERATOR_GTE, TAG_FILTER_OPERATOR_EQ, TAG_FILTER_OPERATOR_IN, \
     TAG_FILTER_OPERATOR_BETWEEN, TAG_FILTER_OPERATOR_NOTIN, TAG_FILTER_OPERATOR_NOTEQ
 
@@ -37,13 +39,13 @@ def valid_operator(operator, operators):
 
 def valid_operand_for_operator(operand, operator):
     _map = {
-        TAG_FILTER_OPERATOR_LTE: (int, basestring, date, datetime),
-        TAG_FILTER_OPERATOR_GTE: (int, basestring, date, datetime),
+        TAG_FILTER_OPERATOR_LTE: (int, string_types, date, datetime),
+        TAG_FILTER_OPERATOR_GTE: (int, string_types, date, datetime),
         TAG_FILTER_OPERATOR_BETWEEN: (list,),
-        TAG_FILTER_OPERATOR_EQ: (int, basestring, list, date, datetime),
-        TAG_FILTER_OPERATOR_NOTEQ: (int, basestring, date, datetime),
+        TAG_FILTER_OPERATOR_EQ: (int, string_types, list, date, datetime),
+        TAG_FILTER_OPERATOR_NOTEQ: (int, string_types, date, datetime),
         TAG_FILTER_OPERATOR_IN: (list,),
-        TAG_FILTER_OPERATOR_NOTIN: (list,)
+        TAG_FILTER_OPERATOR_NOTIN: (list,),
     }
     return valid_operand(operand, _map[operator])
 
@@ -60,7 +62,7 @@ def valid_days(operand):
 
 
 def valid_bool(operand):
-    if isinstance(operand, basestring):
+    if isinstance(operand, string_types):
         values = ['true', 'false']
         return operand.lower() in values
     else:
@@ -94,7 +96,7 @@ def set_dates_in_list(operand):
 
 
 def parse_date(operand):
-    if isinstance(operand, basestring):
+    if isinstance(operand, string_types):
         return set_date_value(operand)
     elif isinstance(operand, list):
         return set_dates_in_list(operand)

@@ -1,8 +1,13 @@
-import httplib
+# try:
+#     import httplib
+# except ImportError:
+#     import http.client
+from six.moves import http_client
+
 import json
 import logging
 
-from base import PushwooshBaseClient
+from .base import PushwooshBaseClient
 
 
 log = logging.getLogger('pypushwoosh.client.log')
@@ -18,7 +23,7 @@ class PushwooshClient(PushwooshBaseClient):
 
     def __init__(self):
         PushwooshBaseClient.__init__(self)
-        connection_class = httplib.HTTPSConnection if self.scheme == 'https' else httplib.HTTPConnection
+        connection_class = http_client.HTTPSConnection if self.scheme == 'https' else http_client.HTTPConnection
         self.connection = connection_class(self.hostname)
 
     def __del__(self):
@@ -48,4 +53,3 @@ class PushwooshClient(PushwooshBaseClient):
 
         body = response.read()
         return json.loads(body)
-

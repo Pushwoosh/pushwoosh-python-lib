@@ -1,11 +1,13 @@
 import json
 
-from notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
+from six import add_metaclass
+
+from .notification import Notification, DevicesFilterNotificationMixin, BaseNotification, \
     BaseNotificationMeta, IOSNotificationMixin, AndroidNotificationMixin, WindowsPhoneNotificationMixin, \
     OSXNotificationMixin, Windows8NotificationMixin, SafariNotificationMixin, AmazonNotificationMixin, \
-    BlackBerryNotificationMixin, CommonNotificationMixin, ChromeNotificationMixin, FilteredNotificationMixin
-from utils import render_attrs
-from exceptions import PushwooshCommandException
+    BlackBerryNotificationMixin, CommonNotificationMixin, ChromeNotificationMixin
+from .utils import render_attrs
+from .exceptions import PushwooshCommandException
 
 
 class BaseCommand(object):
@@ -131,6 +133,7 @@ class DeleteMessageCommand(BaseAuthCommand):
         BaseAuthCommand.compile(self)
 
 
+@add_metaclass(BaseNotificationMeta)
 class CreateTargetedMessageCommand(BaseAuthCommand,
                                    BaseNotification,
                                    IOSNotificationMixin,
@@ -147,7 +150,6 @@ class CreateTargetedMessageCommand(BaseAuthCommand,
     """
     Creates new push notification command (from Advanced Tags Guide)
     """
-    __metaclass__ = BaseNotificationMeta
     command_name = 'createTargetedMessage'
 
     def __init__(self):
@@ -159,11 +161,11 @@ class CreateTargetedMessageCommand(BaseAuthCommand,
         BaseAuthCommand.compile(self)
 
 
+@add_metaclass(BaseNotificationMeta)
 class CompileFilterCommand(BaseAuthCommand, BaseNotification, DevicesFilterNotificationMixin):
     """
     Compiling filters and dry-run command (from Advanced Tags Guide)
     """
-    __metaclass__ = BaseNotificationMeta
     command_name = 'compileFilter'
 
     def __init__(self):
