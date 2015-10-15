@@ -1,11 +1,6 @@
 import unittest
 import datetime
 import uuid
-import sys
-import os
-
-base_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(os.path.join(base_dir, os.pardir))
 
 from pypushwoosh import client
 from pypushwoosh import constants
@@ -16,21 +11,37 @@ from pypushwoosh.filter import ApplicationFilter
 from pypushwoosh.notification import Notification
 from pypushwoosh.exceptions import PushwooshCommandException, PushwooshNotificationException
 
+from . import PW_TOKEN, PW_APP_CODE, PW_APP_GROUP_CODE
+
 HTTP_200_OK = 200
 STATUS_OK = 'OK'
 
 
-class TestCreateMessageCommand(unittest.TestCase):
+class IntegrationTestCase(unittest.TestCase):
 
     def setUp(self):
+        if PW_TOKEN is None:
+            raise unittest.case.SkipTest('Environment variable PW_TOKEN is not set.')
+        if PW_APP_CODE is None:
+            raise unittest.case.SkipTest('Environment variable PW_APP_CODE is not set.')
+        if PW_APP_GROUP_CODE is None:
+            raise unittest.case.SkipTest('Environment variable PW_APP_GROUP_CODE is not set.')
+
+        super(IntegrationTestCase, self).setUp()
+
+
+class TestCreateMessageCommand(IntegrationTestCase):
+
+    def setUp(self):
+        super(TestCreateMessageCommand, self).setUp()
+
         self.client = client.PushwooshClient()
         self.notification = Notification()
         self.notification.content = 'Hello world!'
-        self.auth = os.environ.get('PW_TOKEN')
+        self.auth = PW_TOKEN
 
     def test_valid_create_by_application(self):
-        self.command = CreateMessageForApplicationCommand(self.notification,
-                                                          application=os.environ.get('PW_APP_CODE'))
+        self.command = CreateMessageForApplicationCommand(self.notification, application=PW_APP_CODE)
         self.command.auth = self.auth
         response = self.client.invoke(self.command)
 
@@ -39,8 +50,7 @@ class TestCreateMessageCommand(unittest.TestCase):
         self.assertEqual(True, 'Messages' in response['response'])
 
     def test_valid_create_by_application_group(self):
-        self.command = CreateMessageForApplicationGroupCommand(self.notification,
-                                                               application_group=os.environ.get('PW_APP_GROUP_CODE'))
+        self.command = CreateMessageForApplicationGroupCommand(self.notification, application_group=PW_APP_GROUP_CODE)
         self.command.auth = self.auth
         response = self.client.invoke(self.command)
 
@@ -59,16 +69,18 @@ class TestCreateMessageCommand(unittest.TestCase):
         self.assertRaises(PushwooshCommandException, self.command.compile)
 
 
-class TestCreateTargetedMessageCommand(unittest.TestCase):
+class TestCreateTargetedMessageCommand(IntegrationTestCase):
 
     def setUp(self):
+        super(TestCreateTargetedMessageCommand, self).setUp()
+
         self.client = client.PushwooshClient()
         self.command = CreateTargetedMessageCommand()
-        self.command.auth = os.environ.get('PW_TOKEN')
+        self.command.auth = PW_TOKEN
         self.command.content = "Hello world!"
 
     def test_valid_create(self):
-        self.command.devices_filter = ApplicationFilter(os.environ.get('PW_APP_CODE'))
+        self.command.devices_filter = ApplicationFilter(PW_APP_CODE)
         response = self.client.invoke(self.command)
 
         self.assertEqual(response['status_code'], HTTP_200_OK)
@@ -79,24 +91,26 @@ class TestCreateTargetedMessageCommand(unittest.TestCase):
         self.assertRaises(PushwooshNotificationException, self.command.compile)
 
 
-class TestDeleteMessageCommand(unittest.TestCase):
+class TestDeleteMessageCommand(IntegrationTestCase):
 
     def setUp(self):
+        super(TestDeleteMessageCommand, self).setUp()
+
         self.client = client.PushwooshClient()
         self.command = DeleteMessageCommand()
 
     def get_message(self):
         command = CreateTargetedMessageCommand()
-        command.auth = os.environ.get('PW_TOKEN')
+        command.auth = PW_TOKEN
         command.content = "Hello world!"
-        command.devices_filter = ApplicationFilter(os.environ.get('PW_APP_CODE'))
+        command.devices_filter = ApplicationFilter(PW_APP_CODE)
         tomorrow = datetime.datetime.today() + datetime.timedelta(1)
         command.send_date = tomorrow.strftime('%Y-%m-%d %H:%M:%S')
         response = self.client.invoke(command)
         return response['response']['messageCode']
 
     def test_valid_delete(self):
-        self.command.auth = os.environ.get('PW_TOKEN')
+        self.command.auth = PW_TOKEN
         self.command.message = self.get_message()
         response = self.client.invoke(self.command)
 
@@ -104,15 +118,17 @@ class TestDeleteMessageCommand(unittest.TestCase):
         self.assertEqual(response['status_message'], STATUS_OK)
 
 
-class TestCompileFilterCommand(unittest.TestCase):
+class TestCompileFilterCommand(IntegrationTestCase):
 
     def setUp(self):
+        super(TestCompileFilterCommand, self).setUp()
+
         self.client = client.PushwooshClient()
         self.command = CompileFilterCommand()
 
     def test_valid_compile_filter(self):
-        self.command.auth = os.environ.get('PW_TOKEN')
-        self.command.devices_filter = ApplicationFilter(os.environ.get('PW_APP_CODE'))
+        self.command.auth = PW_TOKEN
+        self.command.devices_filter = ApplicationFilter(PW_APP_CODE)
         response = self.client.invoke(self.command)
 
         self.assertEqual(response['status_code'], HTTP_200_OK)
@@ -120,14 +136,16 @@ class TestCompileFilterCommand(unittest.TestCase):
         self.assertEqual(True, 'devices_count' in response['response'])
 
 
-class TestDeviceCommands(unittest.TestCase):
+class TestDeviceCommands(IntegrationTestCase):
 
     def setUp(self):
+        super(TestDeviceCommands, self).setUp()
+
         self.client = client.PushwooshClient()
-        self.auth = os.environ.get('PW_TOKEN')
+        self.auth = PW_TOKEN
         self.hwid = str(uuid.uuid4())
         self.push_token = str(uuid.uuid4())
-        self.app_code = os.environ.get('PW_APP_CODE')
+        self.app_code = PW_APP_CODE
 
         # Register device for tests
         command = RegisterDeviceCommand(self.app_code, self.hwid, constants.PLATFORM_ANDROID, self.push_token)
@@ -168,7 +186,3 @@ class TestDeviceCommands(unittest.TestCase):
 
         self.assertEqual(response['status_code'], HTTP_200_OK)
         self.assertEqual(response['status_message'], STATUS_OK)
-
-
-if __name__ == '__main__':
-    unittest.main()
