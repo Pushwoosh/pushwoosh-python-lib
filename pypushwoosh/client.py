@@ -1,11 +1,7 @@
-# try:
-#     import httplib
-# except ImportError:
-#     import http.client
-from six.moves import http_client
-
 import json
 import logging
+
+from six.moves import http_client
 
 from .base import PushwooshBaseClient
 

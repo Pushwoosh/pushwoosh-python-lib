@@ -1,3 +1,16 @@
+v0.2.0, 2015-10-16
+
+features:
+
+* added support for Python 3
+* added tox
+* added ChromeNotificationMixin
+
+bugfixes:
+
+* fixed setup.py issues. change distutils to setuptools. Oops...
+
+
 v0.1.1, 2014-09-18
 
 changes:
