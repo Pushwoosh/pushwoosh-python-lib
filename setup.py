@@ -16,7 +16,7 @@ setup(
     maintainer='Konstantin Misyutin',
     maintainer_email='ikeeip@gmail.com',
     packages=['pypushwoosh'],
-    url='http://pushwoosh.com/',
+    url='https://github.com/Pushwoosh/pushwoosh-python-lib',
     keywords=['Pushwoosh'],
     license='MIT',
     description='Python client for Pushwoosh',
