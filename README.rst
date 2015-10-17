@@ -57,6 +57,12 @@ For targeted messages, supports:
 Installation
 ____________
    
+Install via `pip`_:
+
+::
+
+    $ pip install pypushwoosh
+
 Install from source:
 
 ::
@@ -64,3 +70,5 @@ Install from source:
     $ git clone git://github.com/Pushwoosh/pushwoosh-python-lib.git
     $ cd pushwoosh-python-lib
     $ python setup.py install
+
+.. _pip: https://pip.pypa.io/en/stable/

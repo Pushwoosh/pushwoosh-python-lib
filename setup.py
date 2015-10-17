@@ -9,7 +9,7 @@ with open(path.join(path.abspath(path.dirname(__file__)), 'README.rst'), encodin
     long_description = f.read()
 
 setup(
-    name='pyPushwoosh',
+    name='pypushwoosh',
     version=__version__,
     author='Konstantin Misyutin',
     author_email='ikeeip@gmail.com',
