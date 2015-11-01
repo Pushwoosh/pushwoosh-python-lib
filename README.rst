@@ -5,6 +5,9 @@ Pushwoosh Python Library
 
 Supported API Version: 1.3
 
+.. image:: https://travis-ci.org/Pushwoosh/pushwoosh-python-lib.svg?branch=master
+    :target: https://travis-ci.org/Pushwoosh/pushwoosh-python-lib
+
 Getting Started
 ---------------
 
