@@ -243,7 +243,7 @@ class GetTagsCommand(BaseAuthCommand):
         self.auth = auth
 
     def compile(self):
-        render_attrs(self, self._command)
+        render_attrs(self, self._command, [])
         BaseDeviceCommand.compile(self)
 
 
