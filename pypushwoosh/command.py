@@ -231,6 +231,22 @@ class UnregisterDeviceCommand(BaseDeviceCommand):
     command_name = 'unregisterDevice'
 
 
+class GetTagsCommand(BaseAuthCommand):
+    """
+    Get tags to selected device
+    """
+    command_name = 'getTags'
+
+    def __init__(self, application, hwid, auth=None):
+        BaseAuthCommand.__init__(self)
+        BaseDeviceCommand.__init__(self, application, hwid)
+        self.auth = auth
+
+    def compile(self):
+        render_attrs(self, self._command, [])
+        BaseDeviceCommand.compile(self)
+
+
 class SetTagsCommand(BaseDeviceCommand):
     """
     Registers device for the application
