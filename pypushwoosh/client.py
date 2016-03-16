@@ -48,4 +48,4 @@ class PushwooshClient(PushwooshBaseClient):
             log.debug('Response headers: %s' % response.getheaders())
 
         body = response.read()
-        return json.loads(body)
+        return json.loads(body.decode('utf-8'))
