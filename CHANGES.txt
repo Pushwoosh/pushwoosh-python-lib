@@ -1,3 +1,14 @@
+v0.2.1, 2016-04-25
+
+features:
+
+* added GetTagsCommand
+
+bugfixes:
+
+* properly decode response
+
+
 v0.2.0, 2015-10-16
 
 features:

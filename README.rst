@@ -44,6 +44,7 @@ At the moment, pypushwoosh supports:
 * Device commands:
 
   * RegisterDeviceCommand
+  * GetTagsCommand
   * SetTagsCommand
   * SetBadgeCommand
   * PushStatCommand
