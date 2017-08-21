@@ -16,7 +16,7 @@ class PushwooshClient(PushwooshBaseClient):
                'Content-Type': 'application/json',
                'Accept': 'application/json'}
 
-    def __init__(self,  timeout=None):
+    def __init__(self, timeout=None):
         PushwooshBaseClient.__init__(self)
         self.timeout = timeout
 
