@@ -1,7 +1,6 @@
-import json
 import logging
 
-from six.moves import http_client
+import requests
 
 from .base import PushwooshBaseClient
 
@@ -17,16 +16,13 @@ class PushwooshClient(PushwooshBaseClient):
                'Content-Type': 'application/json',
                'Accept': 'application/json'}
 
-    def __init__(self):
+    def __init__(self, timeout=None):
         PushwooshBaseClient.__init__(self)
-        connection_class = http_client.HTTPSConnection if self.scheme == 'https' else http_client.HTTPConnection
-        self.connection = connection_class(self.hostname)
-
-    def __del__(self):
-        self.connection.close()
+        self.timeout = timeout
 
     def path(self, command):
-        return '/'.join(('', self.endpoint, self.version, command.command_name))
+        return '{}://{}/'.format(self.scheme, self.hostname) + '/'.join((self.endpoint, self.version,
+                                                                         command.command_name))
 
     def invoke(self, command):
         PushwooshBaseClient.invoke(self, command)
@@ -38,14 +34,12 @@ class PushwooshClient(PushwooshBaseClient):
             log.debug('Request method: %s' % self.method)
             log.debug('Request headers: %s' % self.headers)
 
-        self.connection.request('POST', self.path(command), command.render(), self.headers)
-        response = self.connection.getresponse()
+        r = requests.post(self.path(command), data=command.render(), headers=self.headers, timeout=self.timeout)
 
         if self.debug:
-            log.debug('Response version: %s' % response.version)
-            log.debug('Response code: %s' % response.status)
-            log.debug('Response phrase: %s' % response.reason)
-            log.debug('Response headers: %s' % response.getheaders())
+            log.debug('Response version: %s' % r.raw.version)
+            log.debug('Response code: %s' % r.status_code)
+            log.debug('Response phrase: %s' % r.reason)
+            log.debug('Response headers: %s' % r.headers)
 
-        body = response.read()
-        return json.loads(body.decode('utf-8'))
+        return r.json()
