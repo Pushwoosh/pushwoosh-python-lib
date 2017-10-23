@@ -1,5 +1,6 @@
 import unittest
 import datetime
+import time
 import uuid
 
 from pypushwoosh import client
@@ -15,6 +16,7 @@ from . import PW_TOKEN, PW_APP_CODE, PW_APP_GROUP_CODE
 
 HTTP_200_OK = 200
 STATUS_OK = 'OK'
+SLEEP_TIME = 5
 
 
 class IntegrationTestCase(unittest.TestCase):
@@ -27,6 +29,9 @@ class IntegrationTestCase(unittest.TestCase):
         if PW_APP_GROUP_CODE is None:
             raise unittest.case.SkipTest('Environment variable PW_APP_GROUP_CODE is not set.')
 
+        self.client = client.PushwooshClient()
+        self.client.debug = True
+
         super(IntegrationTestCase, self).setUp()
 
 
@@ -35,7 +40,6 @@ class TestCreateMessageCommand(IntegrationTestCase):
     def setUp(self):
         super(TestCreateMessageCommand, self).setUp()
 
-        self.client = client.PushwooshClient()
         self.notification = Notification()
         self.notification.content = 'Hello world!'
         self.auth = PW_TOKEN
@@ -74,7 +78,6 @@ class TestCreateTargetedMessageCommand(IntegrationTestCase):
     def setUp(self):
         super(TestCreateTargetedMessageCommand, self).setUp()
 
-        self.client = client.PushwooshClient()
         self.command = CreateTargetedMessageCommand()
         self.command.auth = PW_TOKEN
         self.command.content = "Hello world!"
@@ -96,7 +99,6 @@ class TestDeleteMessageCommand(IntegrationTestCase):
     def setUp(self):
         super(TestDeleteMessageCommand, self).setUp()
 
-        self.client = client.PushwooshClient()
         self.command = DeleteMessageCommand()
 
     def get_message(self):
@@ -123,7 +125,6 @@ class TestCompileFilterCommand(IntegrationTestCase):
     def setUp(self):
         super(TestCompileFilterCommand, self).setUp()
 
-        self.client = client.PushwooshClient()
         self.command = CompileFilterCommand()
 
     def test_valid_compile_filter(self):
@@ -141,7 +142,6 @@ class TestDeviceCommands(IntegrationTestCase):
     def setUp(self):
         super(TestDeviceCommands, self).setUp()
 
-        self.client = client.PushwooshClient()
         self.auth = PW_TOKEN
         self.hwid = str(uuid.uuid4())
         self.push_token = str(uuid.uuid4())
@@ -150,6 +150,9 @@ class TestDeviceCommands(IntegrationTestCase):
         # Register device for tests
         command = RegisterDeviceCommand(self.app_code, self.hwid, constants.PLATFORM_ANDROID, self.push_token)
         self.client.invoke(command)
+
+        # wait a ..second while command will be invoked on Pushwoosh side
+        time.sleep(SLEEP_TIME)
 
     def test_valid_register_device(self):
         command = RegisterDeviceCommand(self.app_code, self.hwid, constants.PLATFORM_ANDROID, self.push_token)
@@ -169,7 +172,7 @@ class TestDeviceCommands(IntegrationTestCase):
         command = SetBadgeCommand(self.app_code, self.hwid, 5)
         response = self.client.invoke(command)
 
-        self.assertEqual(response['status_message'], 'Badges can be set on iOS devices only')
+        self.assertEqual(response['status_message'], STATUS_OK)
 
     def test_get_nearest_zone_command(self):
         lat = '53.42513'
