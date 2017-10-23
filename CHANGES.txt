@@ -1,3 +1,15 @@
+v0.3.0, 2017-10-23
+
+features:
+
+* move to 'requests' =)
+* add ability to set timeout to PushwooshClient
+
+bugfixes:
+
+* add missed dev requirements: six
+
+
 v0.2.1, 2016-04-25
 
 features:
