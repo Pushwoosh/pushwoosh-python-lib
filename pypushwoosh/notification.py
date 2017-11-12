@@ -382,7 +382,7 @@ class ChromeNotificationMixin(BaseNotificationMixin):
    Chrome platform related attributes mixin to notification.
 
     Attributes:
-        chrome_header (str): Optional
+        chrome_title (str): Optional
         chrome_icon (str):  Optional
         chrome_gcm_ttl (int): Optional
     """
@@ -390,13 +390,13 @@ class ChromeNotificationMixin(BaseNotificationMixin):
 #   TODO: better describe this
 
     def __init__(self):
-        self.chrome_header = None
+        self.chrome_title = None
         self.chrome_icon = None
-        self.chrome_ttl = None
+        self.chrome_gcm_ttl = None
 
     def render(self):
         result = {}
-        render_attrs(self, result, ('chrome_header', 'chrome_icon', 'chrome_ttl',))
+        render_attrs(self, result, ('chrome_title', 'chrome_icon', 'chrome_gcm_ttl',))
         return result
 
 
