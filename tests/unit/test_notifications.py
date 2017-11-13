@@ -218,18 +218,18 @@ class TestNotifications(unittest.TestCase):
         return expected_result
 
     def notification_chrome(self):
-        chrome_header = 'Test header'
+        chrome_title = 'Test header'
         chrome_icon = 'icon in app'
-        chrome_ttl = 60 * 60 * 24
+        chrome_gcm_ttl = 60 * 60 * 24
 
         expected_result = {
-            'chrome_header': chrome_header,
+            'chrome_title': chrome_title,
             'chrome_icon': chrome_icon,
-            'chrome_ttl': chrome_ttl,
+            'chrome_gcm_ttl': chrome_gcm_ttl,
         }
-        self.notification.chrome_header = chrome_header
+        self.notification.chrome_title = chrome_title
         self.notification.chrome_icon = chrome_icon
-        self.notification.chrome_ttl = chrome_ttl
+        self.notification.chrome_gcm_ttl = chrome_gcm_ttl
 
         return expected_result
 
