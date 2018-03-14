@@ -385,6 +385,12 @@ class ChromeNotificationMixin(BaseNotificationMixin):
         chrome_title (str): Optional
         chrome_icon (str):  Optional
         chrome_gcm_ttl (int): Optional
+        chrome_duration (int): Optional
+        chrome_image (str): Optional
+        chrome_button_text1 (str): Optional
+        chrome_button_url1 (str): Optional
+        chrome_button_text2 (str): Optional
+        chrome_button_url2 (str): Optional
     """
 
 #   TODO: better describe this
@@ -393,10 +399,18 @@ class ChromeNotificationMixin(BaseNotificationMixin):
         self.chrome_title = None
         self.chrome_icon = None
         self.chrome_gcm_ttl = None
+        self.chrome_duration = None
+        self.chrome_image = None
+        self.chrome_button_text1 = None
+        self.chrome_button_url1 = None
+        self.chrome_button_text2 = None
+        self.chrome_button_url2 = None
 
     def render(self):
         result = {}
-        render_attrs(self, result, ('chrome_title', 'chrome_icon', 'chrome_gcm_ttl',))
+        render_attrs(self, result, ('chrome_title', 'chrome_icon', 'chrome_gcm_ttl', 'chrome_duration',
+                                    'chrome_image', 'chrome_button_text1', 'chrome_button_url1',
+                                    'chrome_button_text2', 'chrome_button_url2'))
         return result
 
 
