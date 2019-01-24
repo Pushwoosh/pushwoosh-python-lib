@@ -62,6 +62,29 @@ class TestCreateMessageCommand(unittest.TestCase):
         command_dict = json.loads(self.command.render())
         self.assertDictEqual(command_dict, expected_result)
 
+    def test_valid_create_by_user(self):
+        users_list = ['user_1', 'user_2']
+        expected_result = {
+            'request': {
+                'application': self.code,
+                'auth': self.auth,
+                'notifications': [
+                    {
+                        'content': 'Hello world!',
+                        'send_date': 'now',
+                        'users': users_list,
+                    }
+                ]
+            }
+        }
+
+        self.notification.users = users_list
+        self.command = CreateMessageForApplicationCommand(self.notification, application=self.code)
+        self.command.auth = self.auth
+
+        command_dict = json.loads(self.command.render())
+        self.assertDictEqual(command_dict, expected_result)
+
     def test_create_message_without_application(self):
         self.command = CreateMessageForApplicationCommand(self.notification)
         self.command.auth = self.auth
