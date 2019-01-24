@@ -66,13 +66,14 @@ class CommonNotificationMixin(BaseNotificationMixin):
         self.link = None
         self.minimize_link = constants.LINK_MINIMIZER_GOOGLE
         self.data = None
+        self.users = None
 
     def render(self):
         result = {
             'send_date': self.send_date,
             'content': self.content,
         }
-        render_attrs(self, result, ('ignore_user_timezone', 'page_id', 'link', 'data'))
+        render_attrs(self, result, ('ignore_user_timezone', 'page_id', 'link', 'data', 'users'))
 
         if 'link' in result:
             result['minimize_link'] = self.minimize_link
